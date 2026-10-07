@@ -1,0 +1,3 @@
+patient_id,doctor_id,date,diagnosis,status
+2,1,2026-10-11,Diabetes Check,Under Treatment
+2,2,2026-10-12,Headache,Completed

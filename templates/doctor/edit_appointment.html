@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Appointment</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+        }
+
+        .navbar {
+            background: #198754;
+            color: white;
+            padding: 18px 30px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h2 {
+            margin: 0;
+        }
+
+        .back {
+            color: white;
+            text-decoration: none;
+            background: #146c43;
+            padding: 9px 15px;
+            border-radius: 6px;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 650px;
+            margin: 40px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+
+            box-shadow:
+                0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        .info {
+            background: #f1f3f5;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+        }
+
+        .info p {
+            margin: 7px 0;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+
+            border: 1px solid #ccc;
+            border-radius: 6px;
+
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #198754;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+
+            background: #198754;
+            color: white;
+
+            border: none;
+            border-radius: 6px;
+
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #146c43;
+        }
+
+        .error {
+            background: #ffe5e5;
+            color: #c00;
+
+            padding: 12px;
+            border-radius: 6px;
+
+            margin-bottom: 20px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+<nav class="navbar">
+
+    <h2>
+        Hospital Doctor Portal
+    </h2>
+
+    <a
+        href="{{ url_for('doctor_web.doctor_dashboard') }}"
+        class="back"
+    >
+        Back to Dashboard
+    </a>
+
+</nav>
+
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>
+            Edit Appointment
+        </h1>
+
+
+        {% if error %}
+
+        <div class="error">
+            {{ error }}
+        </div>
+
+        {% endif %}
+
+
+        <div class="info">
+
+            <p>
+                <strong>Appointment ID:</strong>
+                {{ appointment.id }}
+            </p>
+
+            <p>
+                <strong>Patient:</strong>
+                {{ appointment.patient.name }}
+            </p>
+
+            <p>
+                <strong>Date:</strong>
+                {{ appointment.date }}
+            </p>
+
+        </div>
+
+
+        <form
+            method="POST"
+            action="{{ url_for(
+                'doctor_web.doctor_edit_appointment',
+                appointment_id=appointment.id
+            ) }}"
+        >
+
+            <label for="diagnosis">
+                Diagnosis
+            </label>
+
+            <input
+                type="text"
+                id="diagnosis"
+                name="diagnosis"
+                value="{{ appointment.diagnosis }}"
+                required
+            >
+
+
+            <label for="status">
+                Status
+            </label>
+
+            <select
+                id="status"
+                name="status"
+                required
+            >
+
+                <option
+                    value="Scheduled"
+                    {% if appointment.status == "Scheduled" %}
+                    selected
+                    {% endif %}
+                >
+                    Scheduled
+                </option>
+
+                <option
+                    value="Under Treatment"
+                    {% if appointment.status == "Under Treatment" %}
+                    selected
+                    {% endif %}
+                >
+                    Under Treatment
+                </option>
+
+                <option
+                    value="Completed"
+                    {% if appointment.status == "Completed" %}
+                    selected
+                    {% endif %}
+                >
+                    Completed
+                </option>
+
+                <option
+                    value="Cancelled"
+                    {% if appointment.status == "Cancelled" %}
+                    selected
+                    {% endif %}
+                >
+                    Cancelled
+                </option>
+
+            </select>
+
+
+            <button type="submit">
+                Update Appointment
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+</body>
+
+</html>

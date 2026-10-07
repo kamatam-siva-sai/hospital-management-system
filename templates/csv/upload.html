@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Upload Appointments CSV</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+
+            background: #f4f6f9;
+
+            min-height: 100vh;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+        }
+
+        .container {
+
+            width: 100%;
+
+            max-width: 600px;
+
+            background: white;
+
+            padding: 35px;
+
+            border-radius: 12px;
+
+            box-shadow:
+                0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+
+            text-align: center;
+
+            color: #2c3e50;
+
+            margin-bottom: 10px;
+        }
+
+        .description {
+
+            text-align: center;
+
+            color: #777;
+
+            margin-bottom: 25px;
+        }
+
+        .flash {
+
+            padding: 12px;
+
+            border-radius: 6px;
+
+            margin-bottom: 15px;
+        }
+
+        .success {
+
+            background: #d1e7dd;
+
+            color: #0f5132;
+        }
+
+        .error {
+
+            background: #f8d7da;
+
+            color: #842029;
+        }
+
+        .upload-box {
+
+            border: 2px dashed #bbb;
+
+            padding: 30px;
+
+            text-align: center;
+
+            border-radius: 8px;
+
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+
+            width: 100%;
+
+            padding: 10px;
+
+            margin-bottom: 20px;
+        }
+
+        button {
+
+            width: 100%;
+
+            padding: 13px;
+
+            border: none;
+
+            border-radius: 6px;
+
+            background: #2c3e50;
+
+            color: white;
+
+            font-size: 16px;
+
+            cursor: pointer;
+        }
+
+        button:hover {
+
+            background: #1f2d3a;
+        }
+
+        .format {
+
+            background: #f8f9fa;
+
+            padding: 15px;
+
+            margin-top: 20px;
+
+            border-radius: 6px;
+
+            font-size: 14px;
+        }
+
+        code {
+
+            display: block;
+
+            margin-top: 10px;
+
+            padding: 10px;
+
+            background: #eee;
+
+            border-radius: 4px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="container">
+
+        <h1>
+            Upload Appointments CSV
+        </h1>
+
+        <p class="description">
+            Import appointment records into the hospital system.
+        </p>
+
+
+        <!-- =========================================
+             FLASH MESSAGES
+        ========================================== -->
+
+        {% with messages = get_flashed_messages(
+            with_categories=true
+        ) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="flash {{ category }}">
+
+                        {{ message }}
+
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- =========================================
+             UPLOAD FORM
+        ========================================== -->
+
+        <form
+            method="POST"
+            action="{{ url_for('csv.upload_csv') }}"
+            enctype="multipart/form-data"
+        >
+
+            <div class="upload-box">
+
+                <p>
+                    Select a CSV file
+                </p>
+
+                <br>
+
+                <input
+                    type="file"
+                    name="file"
+                    accept=".csv"
+                    required
+                >
+
+            </div>
+
+
+            <button type="submit">
+
+                Upload CSV
+
+            </button>
+
+        </form>
+
+
+        <!-- =========================================
+             REQUIRED FORMAT
+        ========================================== -->
+
+        <div class="format">
+
+            <strong>
+                Required CSV columns:
+            </strong>
+
+            <code>
+                patient_id,doctor_id,date,diagnosis,status
+            </code>
+
+            <p style="margin-top: 10px;">
+
+                Date format:
+                <strong>YYYY-MM-DD</strong>
+
+            </p>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

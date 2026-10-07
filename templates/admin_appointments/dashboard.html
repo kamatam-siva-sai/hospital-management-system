@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Appointment Management</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #333;
+        }
+
+        /* ==============================
+           HEADER
+        ============================== */
+
+        .header {
+            background: #1f4e79;
+            color: white;
+            padding: 20px 30px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .header-buttons a {
+            background: white;
+            color: #1f4e79;
+            text-decoration: none;
+
+            padding: 10px 16px;
+
+            border-radius: 6px;
+
+            font-weight: bold;
+        }
+
+        /* ==============================
+           MAIN CONTAINER
+        ============================== */
+
+        .container {
+            width: 95%;
+            max-width: 1400px;
+
+            margin: 30px auto;
+        }
+
+        .page-title {
+            color: #1f4e79;
+            margin-bottom: 20px;
+        }
+
+        /* ==============================
+           CARDS
+        ============================== */
+
+        .card {
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 10px;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.08);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: #1f4e79;
+        }
+
+        /* ==============================
+           MESSAGES
+        ============================== */
+
+        .message {
+            padding: 13px;
+
+            border-radius: 6px;
+
+            margin-bottom: 20px;
+
+            font-weight: bold;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* ==============================
+           FORM
+        ============================== */
+
+        .form-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+
+            flex-direction: column;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-weight: bold;
+
+            margin-bottom: 8px;
+        }
+
+        input,
+        select {
+            width: 100%;
+
+            padding: 12px;
+
+            border: 1px solid #ccc;
+
+            border-radius: 6px;
+
+            font-size: 15px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+
+            border-color: #1f4e79;
+        }
+
+        .button {
+            border: none;
+
+            padding: 11px 18px;
+
+            border-radius: 6px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            text-decoration: none;
+
+            display: inline-block;
+        }
+
+        .primary {
+            background: #198754;
+            color: white;
+        }
+
+        .primary:hover {
+            background: #146c43;
+        }
+
+        .secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .blue {
+            background: #0d6efd;
+            color: white;
+        }
+
+        .yellow {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .red {
+            background: #dc3545;
+            color: white;
+        }
+
+        .form-buttons {
+            margin-top: 20px;
+
+            display: flex;
+
+            gap: 10px;
+        }
+
+        /* ==============================
+           APPOINTMENT TABLE
+        ============================== */
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+
+            min-width: 1000px;
+        }
+
+        th,
+        td {
+            padding: 13px;
+
+            border-bottom: 1px solid #ddd;
+
+            text-align: left;
+        }
+
+        th {
+            background: #1f4e79;
+            color: white;
+        }
+
+        tr:hover {
+            background: #f7f7f7;
+        }
+
+        .actions {
+            display: flex;
+
+            gap: 7px;
+
+            align-items: center;
+        }
+
+        .actions form {
+            margin: 0;
+        }
+
+        /* ==============================
+           STATUS
+        ============================== */
+
+        .status {
+            display: inline-block;
+
+            padding: 6px 10px;
+
+            border-radius: 6px;
+
+            font-size: 13px;
+
+            font-weight: bold;
+        }
+
+        .completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .under-treatment {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .scheduled {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        /* ==============================
+           VIEW DETAILS
+        ============================== */
+
+        .details {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 15px;
+        }
+
+        .detail-box {
+            background: #f4f6f9;
+
+            padding: 15px;
+
+            border-radius: 6px;
+        }
+
+        .detail-box strong {
+            display: block;
+
+            margin-bottom: 5px;
+
+            color: #555;
+        }
+
+        /* ==============================
+           EMPTY
+        ============================== */
+
+        .empty {
+            text-align: center;
+
+            padding: 30px;
+
+            color: #777;
+        }
+
+        /* ==============================
+           RESPONSIVE
+        ============================== */
+
+        @media (max-width: 800px) {
+
+            .header {
+                flex-direction: column;
+
+                text-align: center;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .details {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================
+         HEADER
+    ========================================== -->
+
+    <div class="header">
+
+        <h1>
+            Hospital Admin
+        </h1>
+
+
+        <div class="header-buttons">
+
+            <a href="/analytics/dashboard">
+                Dashboard
+            </a>
+
+            <a href="/admin/patients">
+                Patients
+            </a>
+
+            <a href="/admin/doctors">
+                Doctors
+            </a>
+
+            <a href="/web-logout">
+                Logout
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         MAIN
+    ========================================== -->
+
+    <div class="container">
+
+
+        <h1 class="page-title">
+            Appointment Management
+        </h1>
+
+
+        <!-- =====================================
+             FLASH MESSAGES
+        ====================================== -->
+
+        {% with messages = get_flashed_messages(
+            with_categories=true
+        ) %}
+
+            {% for category, message in messages %}
+
+                <div
+                    class="message
+                    {% if category == 'error' %}
+                        error
+                    {% else %}
+                        success
+                    {% endif %}"
+                >
+
+                    {{ message }}
+
+                </div>
+
+            {% endfor %}
+
+        {% endwith %}
+
+
+
+        <!-- =====================================
+             VIEW APPOINTMENT
+        ====================================== -->
+
+        {% if view_appointment %}
+
+        <div class="card">
+
+            <h2>
+                Appointment Details
+            </h2>
+
+
+            <div class="details">
+
+
+                <div class="detail-box">
+
+                    <strong>
+                        Appointment ID
+                    </strong>
+
+                    {{ view_appointment.id }}
+
+                </div>
+
+
+                <div class="detail-box">
+
+                    <strong>
+                        Patient
+                    </strong>
+
+                    {{ view_appointment.patient.name }}
+
+                </div>
+
+
+                <div class="detail-box">
+
+                    <strong>
+                        Doctor
+                    </strong>
+
+                    {{ view_appointment.doctor.name }}
+
+                </div>
+
+
+                <div class="detail-box">
+
+                    <strong>
+                        Date
+                    </strong>
+
+                    {{ view_appointment.date }}
+
+                </div>
+
+
+                <div class="detail-box">
+
+                    <strong>
+                        Diagnosis
+                    </strong>
+
+                    {{ view_appointment.diagnosis }}
+
+                </div>
+
+
+                <div class="detail-box">
+
+                    <strong>
+                        Status
+                    </strong>
+
+                    {{ view_appointment.status }}
+
+                </div>
+
+
+            </div>
+
+
+            <div class="form-buttons">
+
+                <a
+                    href="{{ url_for(
+                        'admin_appointment_web.admin_appointment_dashboard'
+                    ) }}"
+                    class="button secondary"
+                >
+                    Close
+                </a>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+
+        <!-- =====================================
+             ADD / EDIT FORM
+        ====================================== -->
+
+        <div class="card">
+
+            {% if edit_appointment %}
+
+                <h2>
+                    Edit Appointment
+                </h2>
+
+                <form
+                    method="POST"
+                    action="{{ url_for(
+                        'admin_appointment_web.admin_appointment_update',
+                        appointment_id=edit_appointment.id
+                    ) }}"
+                >
+
+            {% else %}
+
+                <h2>
+                    Add Appointment
+                </h2>
+
+                <form
+                    method="POST"
+                    action="{{ url_for(
+                        'admin_appointment_web.admin_appointment_add'
+                    ) }}"
+                >
+
+            {% endif %}
+
+
+                <div class="form-grid">
+
+
+                    <!-- PATIENT -->
+
+                    <div class="form-group">
+
+                        <label for="patient_id">
+                            Patient
+                        </label>
+
+                        <select
+                            id="patient_id"
+                            name="patient_id"
+                            required
+                        >
+
+                            <option value="">
+                                Select Patient
+                            </option>
+
+
+                            {% for patient in patients %}
+
+                                <option
+                                    value="{{ patient.id }}"
+
+                                    {% if edit_appointment
+                                        and edit_appointment.patient_id
+                                        == patient.id
+                                    %}
+                                        selected
+                                    {% endif %}
+                                >
+
+                                    {{ patient.name }}
+
+                                    -
+                                    ID {{ patient.id }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+
+                    <!-- DOCTOR -->
+
+                    <div class="form-group">
+
+                        <label for="doctor_id">
+                            Doctor
+                        </label>
+
+                        <select
+                            id="doctor_id"
+                            name="doctor_id"
+                            required
+                        >
+
+                            <option value="">
+                                Select Doctor
+                            </option>
+
+
+                            {% for doctor in doctors %}
+
+                                <option
+                                    value="{{ doctor.id }}"
+
+                                    {% if edit_appointment
+                                        and edit_appointment.doctor_id
+                                        == doctor.id
+                                    %}
+                                        selected
+                                    {% endif %}
+                                >
+
+                                    {{ doctor.name }}
+
+                                    -
+                                    {{ doctor.specialization }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+
+                    <!-- DATE -->
+
+                    <div class="form-group">
+
+                        <label for="date">
+                            Appointment Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="date"
+                            name="date"
+
+                            {% if edit_appointment %}
+                                value="{{ edit_appointment.date }}"
+                            {% endif %}
+
+                            required
+                        >
+
+                    </div>
+
+
+
+                    <!-- STATUS -->
+
+                    <div class="form-group">
+
+                        <label for="status">
+                            Status
+                        </label>
+
+                        <select
+                            id="status"
+                            name="status"
+                            required
+                        >
+
+                            {% set current_status =
+                                edit_appointment.status
+                                if edit_appointment
+                                else "Under Treatment"
+                            %}
+
+
+                            <option
+                                value="Under Treatment"
+                                {% if current_status
+                                    == "Under Treatment"
+                                %}
+                                    selected
+                                {% endif %}
+                            >
+                                Under Treatment
+                            </option>
+
+
+                            <option
+                                value="Scheduled"
+                                {% if current_status
+                                    == "Scheduled"
+                                %}
+                                    selected
+                                {% endif %}
+                            >
+                                Scheduled
+                            </option>
+
+
+                            <option
+                                value="Completed"
+                                {% if current_status
+                                    == "Completed"
+                                %}
+                                    selected
+                                {% endif %}
+                            >
+                                Completed
+                            </option>
+
+
+                            <option
+                                value="Cancelled"
+                                {% if current_status
+                                    == "Cancelled"
+                                %}
+                                    selected
+                                {% endif %}
+                            >
+                                Cancelled
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+
+                    <!-- DIAGNOSIS -->
+
+                    <div class="form-group full">
+
+                        <label for="diagnosis">
+                            Diagnosis
+                        </label>
+
+                        <input
+                            type="text"
+                            id="diagnosis"
+                            name="diagnosis"
+
+                            {% if edit_appointment %}
+                                value="{{ edit_appointment.diagnosis }}"
+                            {% endif %}
+
+                            placeholder="Enter diagnosis"
+                            required
+                        >
+
+                    </div>
+
+
+                </div>
+
+
+
+                <div class="form-buttons">
+
+
+                    {% if edit_appointment %}
+
+                        <button
+                            type="submit"
+                            class="button blue"
+                        >
+                            Save Changes
+                        </button>
+
+
+                        <a
+                            href="{{ url_for(
+                                'admin_appointment_web.admin_appointment_dashboard'
+                            ) }}"
+                            class="button secondary"
+                        >
+                            Cancel
+                        </a>
+
+
+                    {% else %}
+
+                        <button
+                            type="submit"
+                            class="button primary"
+                        >
+                            Add Appointment
+                        </button>
+
+                    {% endif %}
+
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+
+
+        <!-- =====================================
+             APPOINTMENT LIST
+        ====================================== -->
+
+        <div class="card">
+
+            <h2>
+                All Appointments
+            </h2>
+
+
+            <p>
+
+                Total Appointments:
+                <strong>
+                    {{ appointments|length }}
+                </strong>
+
+            </p>
+
+
+            {% if appointments %}
+
+
+            <div class="table-container">
+
+                <table>
+
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                ID
+                            </th>
+
+                            <th>
+                                Patient
+                            </th>
+
+                            <th>
+                                Doctor
+                            </th>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                                Diagnosis
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+
+                    <tbody>
+
+
+                        {% for appointment in appointments %}
+
+                        <tr>
+
+
+                            <td>
+                                {{ appointment.id }}
+                            </td>
+
+
+                            <td>
+                                {{ appointment.patient.name }}
+                            </td>
+
+
+                            <td>
+                                {{ appointment.doctor.name }}
+                            </td>
+
+
+                            <td>
+                                {{ appointment.date }}
+                            </td>
+
+
+                            <td>
+                                {{ appointment.diagnosis }}
+                            </td>
+
+
+                            <td>
+
+
+                                {% set status_class =
+                                    appointment.status
+                                    |lower
+                                    |replace(
+                                        ' ',
+                                        '-'
+                                    )
+                                %}
+
+
+                                <span
+                                    class="status
+                                    {{ status_class }}"
+                                >
+
+                                    {{ appointment.status }}
+
+                                </span>
+
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="actions">
+
+
+                                    <!-- VIEW -->
+
+                                    <a
+                                        href="{{ url_for(
+                                            'admin_appointment_web.admin_appointment_dashboard',
+                                            view_id=appointment.id
+                                        ) }}"
+                                        class="button blue"
+                                    >
+                                        View
+                                    </a>
+
+
+                                    <!-- EDIT -->
+
+                                    <a
+                                        href="{{ url_for(
+                                            'admin_appointment_web.admin_appointment_dashboard',
+                                            edit_id=appointment.id
+                                        ) }}"
+                                        class="button yellow"
+                                    >
+                                        Edit
+                                    </a>
+
+
+                                    <!-- DELETE -->
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for(
+                                            'admin_appointment_web.admin_appointment_delete',
+                                            appointment_id=appointment.id
+                                        ) }}"
+                                        onsubmit="return confirm(
+                                            'Are you sure you want to delete this appointment?'
+                                        );"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="button red"
+                                        >
+                                            Delete
+                                        </button>
+
+                                    </form>
+
+
+                                </div>
+
+                            </td>
+
+
+                        </tr>
+
+                        {% endfor %}
+
+
+                    </tbody>
+
+
+                </table>
+
+            </div>
+
+
+            {% else %}
+
+                <div class="empty">
+
+                    No appointments found.
+
+                </div>
+
+            {% endif %}
+
+
+        </div>
+
+
+    </div>
+
+
+</body>
+
+</html>

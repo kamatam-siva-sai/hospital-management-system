@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Patient Dashboard</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        .navbar {
+            background: #007bff;
+            color: white;
+
+            padding: 18px 30px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .navbar h2 {
+            margin: 0;
+        }
+
+        .logout {
+            color: white;
+            background: #dc3545;
+
+            text-decoration: none;
+
+            padding: 9px 15px;
+
+            border-radius: 6px;
+        }
+
+        /* =========================
+           CONTAINER
+        ========================= */
+
+        .container {
+            width: 95%;
+            max-width: 1200px;
+
+            margin: 30px auto;
+        }
+
+        /* =========================
+           CARD
+        ========================= */
+
+        .card {
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 10px;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .card h1,
+        .card h2 {
+            margin-top: 0;
+        }
+
+        /* =========================
+           PROFILE
+        ========================= */
+
+        .profile-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fit, minmax(220px, 1fr));
+
+            gap: 15px;
+        }
+
+        .profile-item {
+            background: #f8f9fa;
+
+            padding: 15px;
+
+            border-radius: 6px;
+        }
+
+        .profile-item strong {
+            display: block;
+
+            margin-bottom: 5px;
+
+            color: #555;
+        }
+
+        /* =========================
+           BOOK APPOINTMENT
+        ========================= */
+
+        .booking-card {
+            border-left: 5px solid #007bff;
+        }
+
+        label {
+            display: block;
+
+            font-weight: bold;
+
+            margin-bottom: 7px;
+        }
+
+        input,
+        select,
+        textarea {
+
+            width: 100%;
+
+            padding: 12px;
+
+            margin-bottom: 18px;
+
+            border: 1px solid #ccc;
+
+            border-radius: 6px;
+
+            font-size: 15px;
+        }
+
+        textarea {
+            resize: vertical;
+
+            min-height: 100px;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+
+            outline: none;
+
+            border-color: #007bff;
+        }
+
+        .book-button {
+
+            background: #007bff;
+
+            color: white;
+
+            border: none;
+
+            padding: 13px 20px;
+
+            border-radius: 6px;
+
+            font-size: 16px;
+
+            cursor: pointer;
+
+            width: 100%;
+        }
+
+        .book-button:hover {
+            background: #0056b3;
+        }
+
+        /* =========================
+           FLASH MESSAGES
+        ========================= */
+
+        .message {
+
+            padding: 12px;
+
+            border-radius: 6px;
+
+            margin-bottom: 20px;
+        }
+
+        .success {
+
+            background: #d4edda;
+
+            color: #155724;
+        }
+
+        .error {
+
+            background: #f8d7da;
+
+            color: #721c24;
+        }
+
+        /* =========================
+           TABLE
+        ========================= */
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+
+            padding: 12px;
+
+            border-bottom: 1px solid #ddd;
+
+            text-align: left;
+        }
+
+        th {
+            background: #f1f3f5;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .empty {
+
+            color: #777;
+
+            padding: 15px 0;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            .container {
+                width: 92%;
+            }
+
+            table {
+                font-size: 13px;
+            }
+
+            th,
+            td {
+                padding: 8px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     NAVBAR
+========================================================= -->
+
+<nav class="navbar">
+
+    <h2>
+        Hospital Patient Portal
+    </h2>
+
+    <a
+        href="{{ url_for('patient_web.patient_logout') }}"
+        class="logout"
+    >
+        Logout
+    </a>
+
+</nav>
+
+
+<div class="container">
+
+
+    <!-- =====================================================
+         FLASH MESSAGES
+    ====================================================== -->
+
+    {% with messages = get_flashed_messages(
+        with_categories=true
+    ) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div class="message {{ category }}">
+
+                    {{ message }}
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <!-- =====================================================
+         PATIENT PROFILE
+    ====================================================== -->
+
+    <div class="card">
+
+        <h1>
+            Welcome, {{ patient.name }}
+        </h1>
+
+        <div class="profile-grid">
+
+            <div class="profile-item">
+
+                <strong>
+                    Patient ID
+                </strong>
+
+                {{ patient.id }}
+
+            </div>
+
+
+            <div class="profile-item">
+
+                <strong>
+                    Name
+                </strong>
+
+                {{ patient.name }}
+
+            </div>
+
+
+            <div class="profile-item">
+
+                <strong>
+                    Age
+                </strong>
+
+                {{ patient.age }}
+
+            </div>
+
+
+            <div class="profile-item">
+
+                <strong>
+                    Gender
+                </strong>
+
+                {{ patient.gender }}
+
+            </div>
+
+
+            <div class="profile-item">
+
+                <strong>
+                    Contact
+                </strong>
+
+                {{ patient.contact }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         BOOK APPOINTMENT
+    ====================================================== -->
+
+    <div class="card booking-card">
+
+        <h2>
+            Book an Appointment
+        </h2>
+
+        <p>
+            Select a doctor and choose a suitable appointment date.
+        </p>
+
+
+        <form
+            method="POST"
+            action="{{ url_for(
+                'patient_web.book_appointment'
+            ) }}"
+        >
+
+
+            <!-- DOCTOR -->
+
+            <label for="doctor_id">
+                Select Doctor
+            </label>
+
+            <select
+                id="doctor_id"
+                name="doctor_id"
+                required
+            >
+
+                <option value="">
+                    -- Select Doctor --
+                </option>
+
+                {% for doctor in doctors %}
+
+                <option
+                    value="{{ doctor.id }}"
+                >
+
+                    Dr. {{ doctor.name }}
+                    -
+                    {{ doctor.specialization }}
+
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+
+            <!-- DATE -->
+
+            <label for="date">
+                Appointment Date
+            </label>
+
+            <input
+                type="date"
+                id="date"
+                name="date"
+                required
+            >
+
+
+            <!-- REASON -->
+
+            <label for="diagnosis">
+                Reason for Appointment
+            </label>
+
+            <textarea
+                id="diagnosis"
+                name="diagnosis"
+                placeholder="Enter your health problem or reason for visit"
+                required
+            ></textarea>
+
+
+            <!-- BUTTON -->
+
+            <button
+                type="submit"
+                class="book-button"
+            >
+                Book Appointment
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- =====================================================
+         MY APPOINTMENTS
+    ====================================================== -->
+
+    <div class="card">
+
+        <h2>
+            My Appointments
+        </h2>
+
+
+        {% if appointments %}
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        ID
+                    </th>
+
+                    <th>
+                        Doctor
+                    </th>
+
+                    <th>
+                        Specialization
+                    </th>
+
+                    <th>
+                        Date
+                    </th>
+
+                    <th>
+                        Diagnosis
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for appointment in appointments %}
+
+                <tr>
+
+                    <td>
+                        {{ appointment.id }}
+                    </td>
+
+                    <td>
+                        Dr. {{ appointment.doctor.name }}
+                    </td>
+
+                    <td>
+                        {{ appointment.doctor.specialization }}
+                    </td>
+
+                    <td>
+                        {{ appointment.date }}
+                    </td>
+
+                    <td>
+                        {{ appointment.diagnosis }}
+                    </td>
+
+                    <td class="status">
+                        {{ appointment.status }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+        <p class="empty">
+            You do not have any appointments yet.
+        </p>
+
+        {% endif %}
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

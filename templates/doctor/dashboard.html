@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Doctor Dashboard</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        .navbar {
+            background: #198754;
+            color: white;
+            padding: 18px 30px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .navbar h2 {
+            margin: 0;
+        }
+
+        .logout {
+            text-decoration: none;
+            color: white;
+            background: #dc3545;
+
+            padding: 9px 15px;
+            border-radius: 6px;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+        .welcome {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .welcome h1 {
+            margin-top: 0;
+        }
+
+        .doctor-info {
+            color: #555;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+
+            box-shadow:
+                0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .section h2 {
+            margin-top: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #f1f3f5;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .edit-btn {
+            display: inline-block;
+
+            padding: 8px 13px;
+
+            background: #198754;
+            color: white;
+
+            text-decoration: none;
+
+            border-radius: 5px;
+        }
+
+        .edit-btn:hover {
+            background: #146c43;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .empty {
+            color: #777;
+            padding: 15px 0;
+        }
+
+        @media (max-width: 700px) {
+
+            .container {
+                width: 92%;
+            }
+
+            table {
+                font-size: 13px;
+            }
+
+            th,
+            td {
+                padding: 8px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+<!-- ================= NAVBAR ================= -->
+
+<nav class="navbar">
+
+    <h2>
+        Hospital Doctor Portal
+    </h2>
+
+    <a
+        href="{{ url_for('doctor_web.doctor_logout') }}"
+        class="logout"
+    >
+        Logout
+    </a>
+
+</nav>
+
+
+<!-- ================= MAIN ================= -->
+
+<div class="container">
+
+
+    <!-- ================= DOCTOR INFORMATION ================= -->
+
+    <div class="welcome">
+
+        <h1>
+            Welcome, Dr. {{ doctor.name }}
+        </h1>
+
+        <div class="doctor-info">
+
+            <p>
+                <strong>Doctor ID:</strong>
+                {{ doctor.id }}
+            </p>
+
+            <p>
+                <strong>Specialization:</strong>
+                {{ doctor.specialization }}
+            </p>
+
+            <p>
+                You can view and manage only your assigned appointments.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= APPOINTMENTS ================= -->
+
+    <div class="section">
+
+        <h2>
+            My Appointments
+        </h2>
+
+
+        {% if appointments %}
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        ID
+                    </th>
+
+                    <th>
+                        Patient
+                    </th>
+
+                    <th>
+                        Date
+                    </th>
+
+                    <th>
+                        Diagnosis
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Action
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for appointment in appointments %}
+
+                <tr>
+
+                    <td>
+                        {{ appointment.id }}
+                    </td>
+
+                    <td>
+                        {{ appointment.patient.name }}
+                    </td>
+
+                    <td>
+                        {{ appointment.date }}
+                    </td>
+
+                    <td>
+                        {{ appointment.diagnosis }}
+                    </td>
+
+                    <td class="status">
+                        {{ appointment.status }}
+                    </td>
+
+                    <td>
+
+                        <a
+                            href="{{ url_for(
+                                'doctor_web.doctor_edit_appointment',
+                                appointment_id=appointment.id
+                            ) }}"
+                            class="edit-btn"
+                        >
+                            Edit
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+        <p class="empty">
+            No appointments are currently assigned to you.
+        </p>
+
+        {% endif %}
+
+    </div>
+
+
+</div>
+
+</body>
+
+</html>

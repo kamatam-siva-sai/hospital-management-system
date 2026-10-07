@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Doctors - Admin</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #333;
+        }
+
+        .header {
+            background: #1f4e79;
+            color: white;
+            padding: 20px 30px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-buttons a {
+            background: white;
+            color: #1f4e79;
+            text-decoration: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+        .top-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .top-section h2 {
+            color: #1f4e79;
+            margin: 0;
+        }
+
+        .add-button {
+            background: #198754;
+            color: white;
+            text-decoration: none;
+            padding: 11px 18px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.08);
+        }
+
+        .count {
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 13px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #1f4e79;
+            color: white;
+        }
+
+        tr:hover {
+            background: #f7f7f7;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .view-button,
+        .edit-button,
+        .delete-button {
+            border: none;
+            padding: 7px 12px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .view-button {
+            background: #0d6efd;
+            color: white;
+        }
+
+        .edit-button {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .delete-button {
+            background: #dc3545;
+            color: white;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+        }
+
+        @media (max-width: 700px) {
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .top-section {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div class="header">
+
+        <h1>
+            Hospital Admin
+        </h1>
+
+
+        <div class="header-buttons">
+
+            <a href="/analytics/dashboard">
+                Dashboard
+            </a>
+
+            <a href="/admin/patients">
+                Patients
+            </a>
+
+            <a href="/web-logout">
+                Logout
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="container">
+
+
+        <div class="top-section">
+
+            <h2>
+                Doctor Management
+            </h2>
+
+
+            <a
+                href="{{ url_for(
+                    'admin_doctor_web.admin_doctor_new'
+                ) }}"
+                class="add-button"
+            >
+                + Add Doctor
+            </a>
+
+        </div>
+
+
+        <div class="card">
+
+
+            {% with messages = get_flashed_messages(
+                with_categories=true
+            ) %}
+
+                {% for category, message in messages %}
+
+                    <div
+                        class="message
+                        {% if category == 'error' %}
+                            error
+                        {% else %}
+                            success
+                        {% endif %}"
+                    >
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endwith %}
+
+
+            <div class="count">
+
+                Total Doctors:
+                {{ doctors|length }}
+
+            </div>
+
+
+            {% if doctors %}
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                ID
+                            </th>
+
+                            <th>
+                                Name
+                            </th>
+
+                            <th>
+                                Specialization
+                            </th>
+
+                            <th>
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                        {% for doctor in doctors %}
+
+                        <tr>
+
+                            <td>
+                                {{ doctor.id }}
+                            </td>
+
+                            <td>
+                                {{ doctor.name }}
+                            </td>
+
+                            <td>
+                                {{ doctor.specialization }}
+                            </td>
+
+                            <td>
+
+                                <div class="action-buttons">
+
+
+                                    <a
+                                        href="{{ url_for(
+                                            'admin_doctor_web.admin_doctor_view',
+                                            doctor_id=doctor.id
+                                        ) }}"
+                                        class="view-button"
+                                    >
+                                        View
+                                    </a>
+
+
+                                    <a
+                                        href="{{ url_for(
+                                            'admin_doctor_web.admin_doctor_edit',
+                                            doctor_id=doctor.id
+                                        ) }}"
+                                        class="edit-button"
+                                    >
+                                        Edit
+                                    </a>
+
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for(
+                                            'admin_doctor_web.admin_doctor_delete',
+                                            doctor_id=doctor.id
+                                        ) }}"
+                                        onsubmit="return confirm(
+                                            'Are you sure you want to delete this doctor?'
+                                        );"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="delete-button"
+                                        >
+                                            Delete
+                                        </button>
+
+                                    </form>
+
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            {% else %}
+
+                <div class="empty">
+                    No doctors found.
+                </div>
+
+            {% endif %}
+
+
+        </div>
+
+    </div>
+
+
+</body>
+
+</html>
